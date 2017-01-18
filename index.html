@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html> 
+<html> 
+<head> 
+	<title>Youtube Data API</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+</head> 
+
+<body> 
+	<div id="VideoThumbs"><!-- 這裡會產生YouTube Thumbs列出影片 --></div>
+	
+	<script type="text/javascript">
+
+		var apiKey = "AIzaSyCIlwa-7d7qpKS0Nj5vhI7tb-0minC-qZ8";
+
+		function getVideos(pid, apiKey) {
+			// PlaylistItems: list 語法參見 https://developers.google.com/youtube/v3/docs/playlistItems/list
+			$.get("https://www.googleapis.com/youtube/v3/playlistItems", {
+				part: "snippet,contentDetails",
+				maxResults: 50,
+				playlistId: pid,
+				key: apiKey},
+				function (data) {
+					document.getElementById("VideoThumbs").innerHTML += '<div style="color:red;">====================================================================================================================================================</div>';
+					// 傳回值參見 https://developers.google.com/youtube/v3/docs/playlistItems#resource-representation
+					$.each(data.items, function (i, item) {
+						var str = '<div style="float:left;font-size:small;margin:5px;">';
+						str += '<a href="https://youtu.be/' + item.snippet.resourceId.videoId + '" target="_blank"><img src="' + item.snippet.thumbnails.medium.url + '" /><br />' + item.snippet.title + '</a><br />';
+						if (item.contentDetails.note !== undefined) str += '<a href="' + item.contentDetails.note + '" target="_blank">延伸閱讀</a><br />';
+						str += '</div>';
+						document.getElementById("VideoThumbs").innerHTML += str;
+					})
+				}
+			);
+		}
+		
+		getVideos("PLUSrSZCf9WlFen7Nbd3edYh4F6tXA231I", apiKey)	// @鐘樓怪人音樂劇
+		
+	</script>	
+</body>
+</html>
